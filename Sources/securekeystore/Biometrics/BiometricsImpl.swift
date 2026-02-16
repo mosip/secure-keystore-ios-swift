@@ -90,6 +90,36 @@ class BiometricsImpl: BiometricsProtocol {
         return context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &error)
     }
     
+    /// Detects the type of biometric authentication supported by the device.
+    /// Returns: "FACE" for Face ID, "FINGERPRINT" for Touch ID, or "NONE"
+    func getSupportedBiometricType() -> String {
+        let context = LAContext()
+        var error: NSError?
+        
+        // Must call canEvaluatePolicy first to populate biometryType
+        let canEvaluate = context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &error)
+        
+        if !canEvaluate {
+            return "NONE"
+        }
+        
+        if #available(iOS 11.0, *) {
+            switch context.biometryType {
+            case .faceID:
+                return "FACE"
+            case .touchID:
+                return "FINGERPRINT"
+            case .none:
+                return "NONE"
+            @unknown default:
+                return "NONE"
+            }
+        } else {
+            // Pre-iOS 11: only Touch ID existed
+            return canEvaluate ? "FINGERPRINT" : "NONE"
+        }
+    }
+    
     // Private method to check if authentication is required based on the key type and its timeout
     private func isAuthenticationRequired(forKeyType keyType: String) -> Bool {
         return authQueue.sync {
