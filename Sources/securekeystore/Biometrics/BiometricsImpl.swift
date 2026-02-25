@@ -96,12 +96,8 @@ class BiometricsImpl: BiometricsProtocol {
         let context = LAContext()
         var error: NSError?
         
-        // Must call canEvaluatePolicy first to populate biometryType
+        // Must call canEvaluatePolicy first to populate biometryType.
         let canEvaluate = context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &error)
-        
-        if !canEvaluate {
-            return "NONE"
-        }
         
         if #available(iOS 11.0, *) {
             switch context.biometryType {
@@ -115,7 +111,7 @@ class BiometricsImpl: BiometricsProtocol {
                 return "NONE"
             }
         } else {
-            // Pre-iOS 11: only Touch ID existed
+            // Pre-iOS 11: biometryType is unavailable, fall back to canEvaluate
             return canEvaluate ? "FINGERPRINT" : "NONE"
         }
     }
