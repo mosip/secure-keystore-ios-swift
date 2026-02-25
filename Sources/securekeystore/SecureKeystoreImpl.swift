@@ -148,8 +148,8 @@ public class SecureKeystoreImpl:SecureKeystoreProtocol {
         return biometrics.hasBiometricsEnabled()
     }
     
-    public func getSupportedBiometricType()->String{
-        return biometrics.getSupportedBiometricType()
+    public func getAvailableBiometricType()->String{
+        return biometrics.getAvailableBiometricType()
     }
     
     public func updatePopup(title:String, desc:String){

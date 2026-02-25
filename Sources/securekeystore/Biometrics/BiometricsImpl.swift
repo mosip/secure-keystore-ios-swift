@@ -90,13 +90,13 @@ class BiometricsImpl: BiometricsProtocol {
         return context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &error)
     }
     
-    enum SupportedBiometricType: String {
+    enum AvailableBiometricType: String {
         case face = "FACE"
         case fingerprint = "FINGERPRINT"
         case none = "NONE"
     }
     
-    func getSupportedBiometricType() -> String {
+    func getAvailableBiometricType() -> String {
         let context = LAContext()
         var error: NSError?
         
@@ -105,16 +105,16 @@ class BiometricsImpl: BiometricsProtocol {
         if #available(iOS 11.0, *) {
             switch context.biometryType {
             case .faceID:
-                return SupportedBiometricType.face.rawValue
+                return AvailableBiometricType.face.rawValue
             case .touchID:
-                return SupportedBiometricType.fingerprint.rawValue
+                return AvailableBiometricType.fingerprint.rawValue
             case .none:
-                return SupportedBiometricType.none.rawValue
+                return AvailableBiometricType.none.rawValue
             @unknown default:
-                return SupportedBiometricType.none.rawValue
+                return AvailableBiometricType.none.rawValue
             }
         } else {
-            return canEvaluate ? SupportedBiometricType.fingerprint.rawValue : SupportedBiometricType.none.rawValue
+            return canEvaluate ? AvailableBiometricType.fingerprint.rawValue : AvailableBiometricType.none.rawValue
         }
     }
     

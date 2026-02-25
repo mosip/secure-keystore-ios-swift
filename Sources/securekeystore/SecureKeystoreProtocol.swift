@@ -17,7 +17,7 @@ public protocol SecureKeystoreProtocol {
     
     func hasBiometricsEnabled() -> Bool
     
-    func getSupportedBiometricType() -> String
+    func getAvailableBiometricType() -> String
     
     func updatePopup(title: String, desc: String)
     
