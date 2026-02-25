@@ -90,29 +90,31 @@ class BiometricsImpl: BiometricsProtocol {
         return context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &error)
     }
     
-    /// Detects the type of biometric authentication supported by the device.
-    /// Returns: "FACE" for Face ID, "FINGERPRINT" for Touch ID, or "NONE"
+    enum SupportedBiometricType: String {
+        case face = "FACE"
+        case fingerprint = "FINGERPRINT"
+        case none = "NONE"
+    }
+    
     func getSupportedBiometricType() -> String {
         let context = LAContext()
         var error: NSError?
         
-        // Must call canEvaluatePolicy first to populate biometryType.
         let canEvaluate = context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &error)
         
         if #available(iOS 11.0, *) {
             switch context.biometryType {
             case .faceID:
-                return "FACE"
+                return SupportedBiometricType.face.rawValue
             case .touchID:
-                return "FINGERPRINT"
+                return SupportedBiometricType.fingerprint.rawValue
             case .none:
-                return "NONE"
+                return SupportedBiometricType.none.rawValue
             @unknown default:
-                return "NONE"
+                return SupportedBiometricType.none.rawValue
             }
         } else {
-            // Pre-iOS 11: biometryType is unavailable, fall back to canEvaluate
-            return canEvaluate ? "FINGERPRINT" : "NONE"
+            return canEvaluate ? SupportedBiometricType.fingerprint.rawValue : SupportedBiometricType.none.rawValue
         }
     }
     
